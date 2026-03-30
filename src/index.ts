@@ -1,5 +1,6 @@
 import { bug1, bug2, dev1, equipo, pr1, pr2, proyecto } from "./data";
 import { trackerFilters } from "./tracker-filters";
+import { trackerReports } from "./tracker-reports";
 import { trackerShortcuts } from "./tracker-shortcuts";
 import { trackerUtils } from "./tracker-utils";
 
@@ -40,3 +41,9 @@ console.log(
 );
 console.log("\n3.4 Nombre para dev id 3:", trackerShortcuts.getDeveloperNameById(equipo, 3));
 console.log("\n3.4 Nombre para dev id 99:", trackerShortcuts.getDeveloperNameById(equipo, 99));
+
+console.log("\n=== Construcción y cálculo ===");
+console.log("\n4.1 Resumen dev1:", trackerReports.buildDeveloperSummary(dev1, proyecto));
+console.log("\n4.2 Conteo de bugs por estado:", trackerReports.countBugsByStatus(proyecto.bugs));
+console.log("\n4.3 Tecnologías únicas del equipo:", trackerReports.getUniqueTeamTechnologies(equipo));
+trackerReports.printProjectReport(proyecto, equipo);
