@@ -58,3 +58,10 @@ export interface DeveloperSummary {
   prsAbiertos: number;
   disponible: boolean;
 }
+
+export interface BugStatusCount {
+  abiertos: number;
+  enRevision: number;
+  resueltos: number;
+  cerrados: number;
+}
