@@ -1,5 +1,6 @@
-import { bug1, bug2, dev1, equipo, pr1, proyecto } from "./data";
+import { bug1, bug2, dev1, equipo, pr1, pr2, proyecto } from "./data";
 import { trackerFilters } from "./tracker-filters";
+import { trackerShortcuts } from "./tracker-shortcuts";
 import { trackerUtils } from "./tracker-utils";
 
 console.log("=== Utilidades ===");
@@ -29,3 +30,13 @@ console.log(
   "\n2.5 Desarrolladores con TypeScript:",
   trackerFilters.findDevelopersByTechnology(equipo, "TypeScript").map((developer) => developer.nombre)
 );
+
+console.log("\n=== Arrow de una línea ===");
+console.log("\n3.1 ¿Dev1 es senior o lead?:", trackerShortcuts.isSeniorOrLead(dev1) ? "Sí" : "No");
+console.log("\n3.2 Título bug1 según prioridad:", trackerShortcuts.getBugTitleByPriority(bug1));
+console.log(
+  "\n3.3 ¿PR2 está aprobado y tiene revisores?:",
+  trackerShortcuts.isApprovedPullRequestWithReviewers(pr2) ? "Sí" : "No"
+);
+console.log("\n3.4 Nombre para dev id 3:", trackerShortcuts.getDeveloperNameById(equipo, 3));
+console.log("\n3.4 Nombre para dev id 99:", trackerShortcuts.getDeveloperNameById(equipo, 99));
