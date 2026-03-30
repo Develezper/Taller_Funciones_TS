@@ -1,4 +1,4 @@
-import type { Bug, Developer, Project, PullRequest } from "./types";
+import type { Bug, Developer, Project, PullRequest } from "./models";
 
 // Test data from the activity statement
 export const dev1: Developer = {
