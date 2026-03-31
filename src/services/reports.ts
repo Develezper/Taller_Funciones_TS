@@ -63,7 +63,8 @@ export function printProjectReport(project: Project, developers: Developer[]): v
   const bugStatusCount = countBugsByStatus(project.bugs);
   const uniqueTechnologies = getUniqueTeamTechnologies(developers);
 
-  console.log("\n=== Reporte del proyecto ===");
+  console.log("\n4.4 Reporte del proyecto");
+  console.log("4.4.1 Información general:");
   console.log(`Nombre: ${project.nombre}`);
   console.log(`Repositorio: ${project.repositorio}`);
   console.log(`Stack del proyecto: ${project.stack.join(", ")}`);
@@ -81,9 +82,9 @@ export function printProjectReport(project: Project, developers: Developer[]): v
     );
   });
 
-  console.log("\nLista de bugs:");
+  console.log("\n4.4.2 Lista de bugs:");
   project.bugs.forEach((bug) => console.log(`- ${formatBugLine(bug, developers)}`));
 
-  console.log("\nLista de pull requests:");
+  console.log("\n4.4.3 Lista de pull requests:");
   project.pullRequests.forEach((pullRequest) => console.log(`- ${formatPullRequestLine(pullRequest, developers)}`));
 }
