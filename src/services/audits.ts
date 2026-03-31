@@ -3,13 +3,15 @@ import { filterBugsByStatus, getBugsByDeveloperId, getPullRequestsWithoutReviewe
 import { getDeveloperNameById } from "./shortcuts";
 import { classifyPullRequestSize } from "./utils";
 
+// Threshold used to flag developers with too many open bugs.
 const MANY_OPEN_BUGS_THRESHOLD = 2;
 
 function totalLinesChanged(pullRequest: PullRequest): number {
+  // Added + deleted lines as a simple size metric.
   return pullRequest.lineasAgregadas + pullRequest.lineasEliminadas;
 }
 
-// 5.1
+// 5.1 Generate bug-related audit alerts.
 export function generateBugAlerts(project: Project, developers: Developer[]): string[] {
   const alerts: string[] = [];
   const openBugs = filterBugsByStatus(project.bugs, "abierto");
@@ -44,7 +46,7 @@ export function generateBugAlerts(project: Project, developers: Developer[]): st
   return alerts;
 }
 
-// 5.2
+// 5.2 Generate pull request-related audit alerts.
 export function generatePullRequestAlerts(project: Project, developers: Developer[]): string[] {
   const alerts: string[] = [];
   const pullRequestsWithoutReviewers = getPullRequestsWithoutReviewers(project.pullRequests);

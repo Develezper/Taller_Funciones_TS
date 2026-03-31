@@ -3,7 +3,7 @@ import { getBugsByDeveloperId } from "./filters";
 import { getDeveloperNameById } from "./shortcuts";
 import { classifyPullRequestSize, formatDate, isPriorityActiveBug } from "./utils";
 
-// 4.1
+// 4.1 Build a summary for a developer based on project bugs and pull requests.
 export function buildDeveloperSummary(developer: Developer, project: Project): DeveloperSummary {
   const assignedBugs = getBugsByDeveloperId(project.bugs, developer.id);
   const resolvedBugs = assignedBugs.filter((bug) => bug.estado === "resuelto");
@@ -22,7 +22,7 @@ export function buildDeveloperSummary(developer: Developer, project: Project): D
   };
 }
 
-// 4.2
+// 4.2 Count bugs grouped by status.
 export function countBugsByStatus(bugs: Bug[]): BugStatusCount {
   return bugs.reduce<BugStatusCount>(
     (accumulator, bug) => {
@@ -36,7 +36,7 @@ export function countBugsByStatus(bugs: Bug[]): BugStatusCount {
   );
 }
 
-// 4.3
+// 4.3 Get all unique technologies used by the team.
 export function getUniqueTeamTechnologies(developers: Developer[]): string[] {
   return Array.from(new Set(developers.flatMap((developer) => developer.stack))).sort((a, b) =>
     a.localeCompare(b, "es")
@@ -44,6 +44,7 @@ export function getUniqueTeamTechnologies(developers: Developer[]): string[] {
 }
 
 function formatBugLine(bug: Bug, developers: Developer[]): string {
+  // Build one compact line per bug for the console report.
   const assignedDeveloperName = getDeveloperNameById(developers, bug.idAsignado);
   const formattedDate = formatDate(bug.fechaReporte);
   const priorityLabel = isPriorityActiveBug(bug) ? "Prioritario activo" : "Normal";
@@ -51,12 +52,13 @@ function formatBugLine(bug: Bug, developers: Developer[]): string {
 }
 
 function formatPullRequestLine(pullRequest: PullRequest, developers: Developer[]): string {
+  // Build one compact line per pull request for the console report.
   const authorName = getDeveloperNameById(developers, pullRequest.idAutor);
   const prSize = classifyPullRequestSize(pullRequest);
   return `#${pullRequest.id} | ${pullRequest.titulo} | ${pullRequest.estado} | Tamaño: ${prSize} | Autor: ${authorName} | Revisores: ${pullRequest.revisores.length}`;
 }
 
-// 4.4
+// 4.4 Print a full project report in console, reusing existing functions.
 export function printProjectReport(project: Project, developers: Developer[]): void {
   const bugStatusCount = countBugsByStatus(project.bugs);
   const uniqueTechnologies = getUniqueTeamTechnologies(developers);
