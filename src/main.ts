@@ -13,6 +13,10 @@ const printItem = (label: string, value: string): void => {
   console.log(`${label}: ${value}`);
 };
 
+const printBulletList = (items: string[]): void => {
+  items.forEach((item) => console.log(`- ${item}`));
+};
+
 console.clear();
 console.log("Taller - Funciones en TypeScript");
 
@@ -53,16 +57,30 @@ printItem(
   `abiertos: ${bugStatusCount.abiertos}, en revisión: ${bugStatusCount.enRevision}, resueltos: ${bugStatusCount.resueltos}, cerrados: ${bugStatusCount.cerrados}`
 );
 printItem("4.3 Tecnologías únicas", formatList(uniqueTech));
-printItem("4.4 Reporte detallado", "Activo");
-services.printProjectReport(proyecto, equipo);
+printItem("4.4 Reporte detallado", "Generado");
+const projectReport = services.buildProjectReport(proyecto, equipo);
+
+printSection("4.4 Reporte del proyecto");
+console.log("4.4.1 Información general");
+console.log(`- Nombre: ${projectReport.generalInfo.nombre}`);
+console.log(`- Repositorio: ${projectReport.generalInfo.repositorio}`);
+console.log(`- Stack del proyecto: ${projectReport.generalInfo.stackProyecto}`);
+console.log(`- Tecnologías del equipo: ${projectReport.generalInfo.tecnologiasEquipo}`);
+console.log(`- Bugs por estado: ${projectReport.generalInfo.bugsPorEstado}`);
+
+console.log(`\n4.4.2 Lista de bugs (${projectReport.bugLines.length})`);
+printBulletList(projectReport.bugLines);
+
+console.log(`\n4.4.3 Lista de pull requests (${projectReport.pullRequestLines.length})`);
+printBulletList(projectReport.pullRequestLines);
 
 const auditAlerts = services.generateAuditAlerts(proyecto, equipo);
 
 printSection("5. Auditoría");
 printItem("5.1 Alertas de bugs", auditAlerts.bugAlerts.length === 0 ? "Sin alertas" : String(auditAlerts.bugAlerts.length));
-auditAlerts.bugAlerts.forEach((alert) => console.log(`- ${alert}`));
+printBulletList(auditAlerts.bugAlerts);
 printItem(
   "5.2 Alertas de pull requests",
   auditAlerts.pullRequestAlerts.length === 0 ? "Sin alertas" : String(auditAlerts.pullRequestAlerts.length)
 );
-auditAlerts.pullRequestAlerts.forEach((alert) => console.log(`- ${alert}`));
+printBulletList(auditAlerts.pullRequestAlerts);

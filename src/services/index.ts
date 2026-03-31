@@ -26,7 +26,7 @@ export {
   buildDeveloperSummary,
   countBugsByStatus,
   getUniqueTeamTechnologies,
-  printProjectReport
+  buildProjectReport
 } from "./reports";
 
 export { generateBugAlerts, generatePullRequestAlerts, generateAuditAlerts } from "./audits";

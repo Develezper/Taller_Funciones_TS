@@ -3,6 +3,19 @@ import { getBugsByDeveloperId } from "./filters";
 import { getDeveloperNameById } from "./shortcuts";
 import { classifyPullRequestSize, formatDate, isPriorityActiveBug } from "./utils";
 
+export interface ProjectReportData {
+  generalInfo: {
+    nombre: string;
+    repositorio: string;
+    stackProyecto: string;
+    tecnologiasEquipo: string;
+    bugsPorEstado: string;
+  };
+  developerSummaryLines: string[];
+  bugLines: string[];
+  pullRequestLines: string[];
+}
+
 // 4.1 Build a summary for a developer based on project bugs and pull requests.
 export function buildDeveloperSummary(developer: Developer, project: Project): DeveloperSummary {
   const assignedBugs = getBugsByDeveloperId(project.bugs, developer.id);
@@ -58,33 +71,28 @@ function formatPullRequestLine(pullRequest: PullRequest, developers: Developer[]
   return `#${pullRequest.id} | ${pullRequest.titulo} | ${pullRequest.estado} | Tamaño: ${prSize} | Autor: ${authorName} | Revisores: ${pullRequest.revisores.length}`;
 }
 
-// 4.4 Print a full project report in console, reusing existing functions.
-export function printProjectReport(project: Project, developers: Developer[]): void {
+// 4.4 Build a full project report structure, reusing existing functions.
+export function buildProjectReport(project: Project, developers: Developer[]): ProjectReportData {
   const bugStatusCount = countBugsByStatus(project.bugs);
   const uniqueTechnologies = getUniqueTeamTechnologies(developers);
-
-  console.log("\n4.4 Reporte del proyecto");
-  console.log("4.4.1 Información general:");
-  console.log(`Nombre: ${project.nombre}`);
-  console.log(`Repositorio: ${project.repositorio}`);
-  console.log(`Stack del proyecto: ${project.stack.join(", ")}`);
-  console.log(`Tecnologías del equipo: ${uniqueTechnologies.join(", ")}`);
-  console.log(
-    `Bugs por estado -> abiertos: ${bugStatusCount.abiertos}, en revisión: ${bugStatusCount.enRevision}, resueltos: ${bugStatusCount.resueltos}, cerrados: ${bugStatusCount.cerrados}`
-  );
-
-  console.log("\nResumen por desarrollador:");
-  developers.forEach((developer) => {
+  const developerSummaryLines = developers.map((developer) => {
     const summary = buildDeveloperSummary(developer, project);
     const availability = summary.disponible ? "Disponible" : "No disponible";
-    console.log(
-      `- ${summary.nombre} (${summary.nivel} ${summary.rol}) | Bugs asignados: ${summary.bugsAsignados} | Bugs resueltos: ${summary.bugsResueltos} | PRs abiertos: ${summary.prsAbiertos} | ${availability}`
-    );
+    return `${summary.nombre} (${summary.nivel} ${summary.rol}) | Bugs asignados: ${summary.bugsAsignados} | Bugs resueltos: ${summary.bugsResueltos} | PRs abiertos: ${summary.prsAbiertos} | ${availability}`;
   });
+  const bugLines = project.bugs.map((bug) => formatBugLine(bug, developers));
+  const pullRequestLines = project.pullRequests.map((pullRequest) => formatPullRequestLine(pullRequest, developers));
 
-  console.log("\n4.4.2 Lista de bugs:");
-  project.bugs.forEach((bug) => console.log(`- ${formatBugLine(bug, developers)}`));
-
-  console.log("\n4.4.3 Lista de pull requests:");
-  project.pullRequests.forEach((pullRequest) => console.log(`- ${formatPullRequestLine(pullRequest, developers)}`));
+  return {
+    generalInfo: {
+      nombre: project.nombre,
+      repositorio: project.repositorio,
+      stackProyecto: project.stack.join(", "),
+      tecnologiasEquipo: uniqueTechnologies.join(", "),
+      bugsPorEstado: `abiertos: ${bugStatusCount.abiertos}, en revisión: ${bugStatusCount.enRevision}, resueltos: ${bugStatusCount.resueltos}, cerrados: ${bugStatusCount.cerrados}`
+    },
+    developerSummaryLines,
+    bugLines,
+    pullRequestLines
+  };
 }
