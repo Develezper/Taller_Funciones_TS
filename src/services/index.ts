@@ -1,11 +1,11 @@
-export type { PullRequestSize } from "./services/utils";
+export type { PullRequestSize } from "./utils";
 
 export {
   formatDate,
   formatDeveloperProfile,
   isPriorityActiveBug,
   classifyPullRequestSize
-} from "./services/utils";
+} from "./utils";
 
 export {
   filterAvailableDevelopers,
@@ -13,50 +13,50 @@ export {
   getBugsByDeveloperId,
   getPullRequestsWithoutReviewers,
   findDevelopersByTechnology
-} from "./services/filters";
+} from "./filters";
 
 export {
   isSeniorOrLead,
   getBugTitleByPriority,
   isApprovedPullRequestWithReviewers,
   getDeveloperNameById
-} from "./services/shortcuts";
+} from "./shortcuts";
 
 export {
   buildDeveloperSummary,
   countBugsByStatus,
   getUniqueTeamTechnologies,
   printProjectReport
-} from "./services/reports";
+} from "./reports";
 
-export { generateBugAlerts, generatePullRequestAlerts, generateAuditAlerts } from "./services/audits";
+export { generateBugAlerts, generatePullRequestAlerts, generateAuditAlerts } from "./audits";
 
 import {
   formatDate,
   formatDeveloperProfile,
   isPriorityActiveBug,
   classifyPullRequestSize
-} from "./services/utils";
+} from "./utils";
 import {
   filterAvailableDevelopers,
   filterBugsByStatus,
   getBugsByDeveloperId,
   getPullRequestsWithoutReviewers,
   findDevelopersByTechnology
-} from "./services/filters";
+} from "./filters";
 import {
   isSeniorOrLead,
   getBugTitleByPriority,
   isApprovedPullRequestWithReviewers,
   getDeveloperNameById
-} from "./services/shortcuts";
+} from "./shortcuts";
 import {
   buildDeveloperSummary,
   countBugsByStatus,
   getUniqueTeamTechnologies,
   printProjectReport
-} from "./services/reports";
-import { generateBugAlerts, generatePullRequestAlerts, generateAuditAlerts } from "./services/audits";
+} from "./reports";
+import { generateBugAlerts, generatePullRequestAlerts, generateAuditAlerts } from "./audits";
 
 export const services = {
   formatDate,
