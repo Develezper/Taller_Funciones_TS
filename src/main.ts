@@ -1,62 +1,72 @@
 import { bug1, bug2, dev1, equipo, pr1, pr2, proyecto } from "./data";
-import { services } from "./services";
+import * as services from "./services";
 
-const formatList = (items: string[]): string => (items.length ? items.join(" | ") : "Sin resultados");
+const formatList = (items: string[]): string => (items.length ? items.join(", ") : "Sin resultados");
 const yesNo = (value: boolean): string => (value ? "Sí" : "No");
+const showFullReport = process.argv.includes("--full");
 
-console.log("=== Taller - Funciones en TypeScript ===");
+const printSection = (title: string): void => {
+  console.log(`\n${title}`);
+  console.log("-".repeat(title.length));
+};
 
-console.log("\n[1] Utilidades");
-console.log(`1.1 Fecha bug1: ${services.formatDate(bug1.fechaReporte)}`);
-console.log(`1.2 Perfil dev1: ${services.formatDeveloperProfile(dev1)}`);
-console.log(`1.3 ¿Bug2 prioritario y activo?: ${yesNo(services.isPriorityActiveBug(bug2))}`);
-console.log(`1.4 Tamaño PR pr1: ${services.classifyPullRequestSize(pr1)}`);
+const printItem = (label: string, value: string): void => {
+  console.log(`${label}: ${value}`);
+};
 
-console.log("\n[2] Búsqueda y filtrado");
-console.log(`2.1 Disponibles: ${formatList(services.filterAvailableDevelopers(equipo).map((dev) => dev.nombre))}`);
-console.log(
-  `2.2 Bugs abiertos: ${formatList(services.filterBugsByStatus(proyecto.bugs, "abierto").map((bug) => bug.titulo))}`
+console.clear();
+console.log("Taller - Funciones en TypeScript");
+
+printSection("1) Utilidades");
+printItem("1.1 Fecha bug1", services.formatDate(bug1.fechaReporte));
+printItem("1.2 Perfil dev1", services.formatDeveloperProfile(dev1));
+printItem("1.3 ¿Bug2 prioritario y activo?", yesNo(services.isPriorityActiveBug(bug2)));
+printItem("1.4 Tamaño PR pr1", services.classifyPullRequestSize(pr1));
+
+printSection("2) Búsqueda y filtrado");
+printItem("2.1 Disponibles", formatList(services.filterAvailableDevelopers(equipo).map((dev) => dev.nombre)));
+printItem("2.2 Bugs abiertos", formatList(services.filterBugsByStatus(proyecto.bugs, "abierto").map((bug) => bug.titulo)));
+printItem("2.3 Bugs del dev 1", formatList(services.getBugsByDeveloperId(proyecto.bugs, 1).map((bug) => bug.titulo)));
+printItem(
+  "2.4 PRs sin revisores",
+  formatList(services.getPullRequestsWithoutReviewers(proyecto.pullRequests).map((pr) => pr.titulo))
 );
-console.log(
-  `2.3 Bugs del dev 1: ${formatList(services.getBugsByDeveloperId(proyecto.bugs, 1).map((bug) => bug.titulo))}`
-);
-console.log(
-  `2.4 PRs sin revisores: ${formatList(
-    services.getPullRequestsWithoutReviewers(proyecto.pullRequests).map((pr) => pr.titulo)
-  )}`
-);
-console.log(
-  `2.5 Con TypeScript: ${formatList(
-    services.findDevelopersByTechnology(equipo, "TypeScript").map((dev) => dev.nombre)
-  )}`
-);
+printItem("2.5 Con TypeScript", formatList(services.findDevelopersByTechnology(equipo, "TypeScript").map((dev) => dev.nombre)));
 
-console.log("\n[3] Arrow de una línea");
-console.log(`3.1 ¿Dev1 es senior o lead?: ${yesNo(services.isSeniorOrLead(dev1))}`);
-console.log(`3.2 Título bug1: ${services.getBugTitleByPriority(bug1)}`);
-console.log(`3.3 ¿PR2 aprobado con revisores?: ${yesNo(services.isApprovedPullRequestWithReviewers(pr2))}`);
-console.log(`3.4 Nombre dev id 3: ${services.getDeveloperNameById(equipo, 3)}`);
-console.log(`3.4 Nombre dev id 99: ${services.getDeveloperNameById(equipo, 99)}`);
+printSection("3) Arrow de una línea");
+printItem("3.1 ¿Dev1 es senior o lead?", yesNo(services.isSeniorOrLead(dev1)));
+printItem("3.2 Título bug1", services.getBugTitleByPriority(bug1));
+printItem("3.3 ¿PR2 aprobado con revisores?", yesNo(services.isApprovedPullRequestWithReviewers(pr2)));
+printItem("3.4 Nombre dev id 3", services.getDeveloperNameById(equipo, 3));
+printItem("3.4 Nombre dev id 99", services.getDeveloperNameById(equipo, 99));
 
-console.log("\n[4] Construcción y cálculo");
-console.log("4.1 Resumen dev1:", services.buildDeveloperSummary(dev1, proyecto));
-console.log("4.2 Conteo por estado:", services.countBugsByStatus(proyecto.bugs));
-console.log(`4.3 Tecnologías únicas: ${formatList(services.getUniqueTeamTechnologies(equipo))}`);
-services.printProjectReport(proyecto, equipo);
+const summaryDev1 = services.buildDeveloperSummary(dev1, proyecto);
+const bugStatusCount = services.countBugsByStatus(proyecto.bugs);
+const uniqueTech = services.getUniqueTeamTechnologies(equipo);
+
+printSection("4) Construcción y cálculo");
+printItem(
+  "4.1 Resumen dev1",
+  `${summaryDev1.nombre} | bugs asignados: ${summaryDev1.bugsAsignados} | bugs resueltos: ${summaryDev1.bugsResueltos} | PRs abiertos: ${summaryDev1.prsAbiertos}`
+);
+printItem(
+  "4.2 Conteo por estado",
+  `abiertos: ${bugStatusCount.abiertos}, en revisión: ${bugStatusCount.enRevision}, resueltos: ${bugStatusCount.resueltos}, cerrados: ${bugStatusCount.cerrados}`
+);
+printItem("4.3 Tecnologías únicas", formatList(uniqueTech));
+printItem("4.4 Reporte detallado", showFullReport ? "Activo" : "Oculto (usa --full para verlo)");
+
+if (showFullReport) {
+  services.printProjectReport(proyecto, equipo);
+}
 
 const auditAlerts = services.generateAuditAlerts(proyecto, equipo);
 
-console.log("\n[5] Auditoría");
-console.log("5.1 Alertas de bugs:");
-if (auditAlerts.bugAlerts.length === 0) {
-  console.log("- Sin alertas de bugs.");
-} else {
-  auditAlerts.bugAlerts.forEach((alert) => console.log(`- ${alert}`));
-}
-
-console.log("5.2 Alertas de pull requests:");
-if (auditAlerts.pullRequestAlerts.length === 0) {
-  console.log("- Sin alertas de pull requests.");
-} else {
-  auditAlerts.pullRequestAlerts.forEach((alert) => console.log(`- ${alert}`));
-}
+printSection("5) Auditoría");
+printItem("5.1 Alertas de bugs", auditAlerts.bugAlerts.length === 0 ? "Sin alertas" : String(auditAlerts.bugAlerts.length));
+auditAlerts.bugAlerts.forEach((alert) => console.log(`- ${alert}`));
+printItem(
+  "5.2 Alertas de pull requests",
+  auditAlerts.pullRequestAlerts.length === 0 ? "Sin alertas" : String(auditAlerts.pullRequestAlerts.length)
+);
+auditAlerts.pullRequestAlerts.forEach((alert) => console.log(`- ${alert}`));
